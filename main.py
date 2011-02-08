@@ -183,14 +183,16 @@ def describeperson(generation, index):
         kids = members(generation+1, n)
         print 'kids',', '.join([str(k) for k in kids])
 
-    gen = generation - 1
-    fathers = []
-    while gen >= 0 and len(fathers) < 10:
-        fore = couple(gen, fam)[1]
-        fam = family(gen, fore)
-        fathers.append(fore)
-        gen -= 1
-    print fathers
+    for i in range(2):
+        gen = generation - 1
+        fam = family(gen, (mom, dad)[i])
+        line = []
+        while gen >= 0 and len(line) < 5:
+            fore = couple(gen, fam)[i]
+            fam = family(gen, fore)
+            line.append(fore)
+            gen -= 1
+        print ('patriline' if i else 'matriline'), line
 
     print
 
