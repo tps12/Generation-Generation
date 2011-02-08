@@ -183,6 +183,15 @@ def describeperson(generation, index):
         kids = members(generation+1, n)
         print 'kids',', '.join([str(k) for k in kids])
 
+    gen = generation - 1
+    fathers = []
+    while gen >= 0 and len(fathers) < 10:
+        fore = couple(gen, fam)[1]
+        fam = family(gen, fore)
+        fathers.append(fore)
+        gen -= 1
+    print fathers
+
     print
 
 while not done:
