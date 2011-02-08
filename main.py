@@ -68,6 +68,64 @@ def family(generation, index):
                 fam += 1
     return fam
 
+def members(generation, family):
+    fam = 0
+    infam = False
+    i = 0
+    sibs = []
+    while True:
+        if personat(generation, i):
+            if not infam:
+                infam = True
+            if fam == family:
+                sibs.append(i)
+        else:
+            if infam:
+                infam = False
+                if fam == family:
+                    break
+                fam += 1
+        i += 1
+    return sibs
+
+def couple(generation, n):
+    i = 0
+    mom = dad = None
+    men = women = 0
+    while True:
+        if personat(generation, i):                                    
+            pfam = family(generation, i)
+
+            if mom is None and dad is None:
+                if sex(generation, i):
+                    if men >= n:
+                        dad = i, pfam
+                    else:
+                        men += 1
+                else:
+                    if women >= n:
+                        mom = i, pfam
+                    else:
+                        women += 1
+            elif mom is not None:
+                if sex(generation-1, i):
+                    if men >= n:
+                        if pfam != mom[1]:
+                            dad = i, pfam
+                            break
+                    else:
+                        men += 1
+            else:
+                if not sex(generation-1, i):
+                    if women >= n:
+                        if pfam != dad[1]:
+                            mom = i, pfam
+                            break
+                    else:
+                        women += 1
+        i += 1
+    return mom[0], dad[0]
+
 while not done:
     for e in event.get():
         if e.type == QUIT:
@@ -81,46 +139,20 @@ while not done:
                     generation = sprite.rect.left / 8
                     index = sprite.rect.top / 8
 
+                    print 'person',index
+
+                    fam = family(generation, index)
+                    print 'member of family',fam,'in generation', generation
+
+                    sibs = [m for m in members(generation, fam) if m != index]
+                    if sibs:
+                        print 'siblings', ', '.join([str(s) for s in sibs])
+                    else:
+                        print 'no siblings'
+
                     if generation > 0:
-                        fam = family(generation, index)
-
-                        i = 0
-                        mom = dad = None
-                        men = women = 0
-                        while True:
-                            if personat(generation-1, i):                                    
-                                pfam = family(generation-1, i)
-
-                                if mom is None and dad is None:
-                                    if sex(generation-1, i):
-                                        if men >= fam:
-                                            dad = i, pfam
-                                        else:
-                                            men += 1
-                                    else:
-                                        if women >= fam:
-                                            mom = i, pfam
-                                        else:
-                                            women += 1
-                                elif mom is not None:
-                                    if sex(generation-1, i):
-                                        if men >= fam:
-                                            if pfam != mom[1]:
-                                                dad = i, pfam
-                                                break
-                                        else:
-                                            men += 1
-                                else:
-                                    if not sex(generation-1, i):
-                                        if women >= fam:
-                                            if pfam != dad[1]:
-                                                mom = i, pfam
-                                                break
-                                        else:
-                                            women += 1
-                            i += 1
-
-                        print mom[0], dad[0]
+                        mom, dad = couple(generation-1, fam)
+                        print 'parents',mom,'and',dad
                     break
 
     sprites.update()
