@@ -1,7 +1,7 @@
 import noise
 
 import pygame
-from pygame import display, event, Surface
+from pygame import display, draw, event, Surface
 from pygame.locals import *
 from pygame.sprite import Sprite, Group
 from pygame.time import Clock
@@ -11,7 +11,7 @@ def gray_value(v):
 
 pygame.init()
 
-screen = display.set_mode((800,600), HWSURFACE)
+screen = display.set_mode((800,800), HWSURFACE)
 display.set_caption('Generations')
 
 background = Surface(screen.get_size())
@@ -28,6 +28,14 @@ background.unlock()
 screen.blit(background, (0,0))
 
 sprites = Group()
+
+for y in range(0, background.get_height()/8):
+    for x in range(0, background.get_width()/8):
+        sprite = Sprite()
+        sprite.image = Surface((4,4), flags=SRCALPHA)
+        draw.circle(sprite.image, (255,255,0), (2,2), 2, 1)
+        sprite.rect = sprite.image.get_rect().move(x*8,y*8)
+        sprites.add(sprite)
 
 limit = Clock()
 
