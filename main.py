@@ -103,43 +103,54 @@ def members(generation, family):
         i += 1
     return sibs
 
-def couple(generation, n):
-    i = 0
-    mom = dad = None
-    men = women = 0
+def couples(generation):
+    n = 0
     while True:
-        if personat(generation, i):                                    
-            pfam = family(generation, i)
+        i = 0
+        mom = dad = None
+        men = women = 0
+        while True:
+            if personat(generation, i):                                    
+                pfam = family(generation, i)
 
-            if mom is None and dad is None:
-                if sex(generation, i):
-                    if men >= n:
-                        dad = i, pfam
-                    else:
-                        men += 1
-                else:
-                    if women >= n:
-                        mom = i, pfam
-                    else:
-                        women += 1
-            elif mom is not None:
-                if sex(generation, i):
-                    if men >= n:
-                        if pfam != mom[1]:
+                if mom is None and dad is None:
+                    if sex(generation, i):
+                        if men >= n:
                             dad = i, pfam
-                            break
+                        else:
+                            men += 1
                     else:
-                        men += 1
-            else:
-                if not sex(generation, i):
-                    if women >= n:
-                        if pfam != dad[1]:
+                        if women >= n:
                             mom = i, pfam
-                            break
-                    else:
-                        women += 1
-        i += 1
-    return mom[0], dad[0]
+                        else:
+                            women += 1
+                elif mom is not None:
+                    if sex(generation, i):
+                        if men >= n:
+                            if pfam != mom[1]:
+                                dad = i, pfam
+                                break
+                        else:
+                            men += 1
+                else:
+                    if not sex(generation, i):
+                        if women >= n:
+                            if pfam != dad[1]:
+                                mom = i, pfam
+                                break
+                        else:
+                            women += 1
+            i += 1
+        yield mom[0], dad[0]
+        n += 1
+
+def couple(generation, n):
+    cs = couples(generation)
+    while True:
+        c = next(cs)
+        if not n:
+            return c
+        n -= 1
 
 def spouse(generation, index):
     i = 0
