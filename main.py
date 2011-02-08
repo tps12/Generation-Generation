@@ -103,6 +103,21 @@ def members(generation, family):
         i += 1
     return sibs
 
+def people(generation):
+    fam = 0
+    infam = False
+    i = 0
+    while True:
+        if personat(generation, i):
+            yield i, fam
+            if not infam:
+                infam = True
+        else:
+            if infam:
+                infam = False
+                fam += 1
+        i += 1
+
 def couples(generation):
     n = 0
     while True:
