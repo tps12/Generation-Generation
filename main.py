@@ -18,15 +18,30 @@ pygame.init()
 screen = display.set_mode((800,800), HWSURFACE)
 display.set_caption('Generations')
 
+dx = randint(-2048,2048)
+dy = randint(-2048,2048)
 def noiseat(x, y):
+    global dx
+    global dy
     return 1 + noise.snoise2(
-            x/10.0,
-            y/800.0,
+            (x+dx)/10.0,
+            (y+dy)/800.0,
             24,
             1)
 
+sdx = randint(-2048,2048)
+sdy = randint(-2048,2048)
 def sex(x, y):
-    return noise.snoise2((x+6253),(y-1220),1,1) > 0
+    global sdx
+    global sdy
+    return noise.snoise2((x+sdx),(y+sdy),1,1) > 0
+
+cdx = randint(-2048,2048)
+cdy = randint(-2048,2048)
+def childless(x, y):
+    global cdx
+    global cdy
+    return noise.snoise2((x+cdx),(y+cdy),1,1) > 0.5
 
 shownoise = '-shownoise' in [a.lower() for a in argv]
            
@@ -113,6 +128,8 @@ def couples(generation):
     ps = people(generation)
     while True:
         i, fam = next(ps)
+        if childless(generation, i):
+            continue
         if sex(generation, i):
             if women and women[0][1] != fam:
                 yield women.popleft()[0], i
@@ -157,11 +174,14 @@ def describeperson(generation, index):
         mom, dad = couple(generation-1, fam)
         print 'parents',mom,'and',dad
 
-    n, partner = spouse(generation, index)
-    print 'spouse',partner
+    if childless(generation, index):
+        print 'childless'
+    else:
+        n, partner = spouse(generation, index)
+        print 'spouse',partner
 
-    kids = members(generation+1, n)
-    print 'kids',', '.join([str(k) for k in kids])
+        kids = members(generation+1, n)
+        print 'kids',', '.join([str(k) for k in kids])
 
     print
 
