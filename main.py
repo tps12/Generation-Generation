@@ -16,8 +16,8 @@ display.set_caption('Generations')
 
 def noiseat(x, y):
     return 1 + noise.snoise2(
-            (x+50) / 600.0 / 512,
-            (y-900) / 600.0 / 512,
+            x / 800.0,
+            y / 800.0,
             12,
             1)
            
