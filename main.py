@@ -108,7 +108,7 @@ def couple(generation, n):
                     else:
                         women += 1
             elif mom is not None:
-                if sex(generation-1, i):
+                if sex(generation, i):
                     if men >= n:
                         if pfam != mom[1]:
                             dad = i, pfam
@@ -116,7 +116,7 @@ def couple(generation, n):
                     else:
                         men += 1
             else:
-                if not sex(generation-1, i):
+                if not sex(generation, i):
                     if women >= n:
                         if pfam != dad[1]:
                             mom = i, pfam
@@ -125,6 +125,22 @@ def couple(generation, n):
                         women += 1
         i += 1
     return mom[0], dad[0]
+
+def spouse(generation, index):
+    i = 0
+    while True:
+        pair = couple(generation, i)
+        if index in pair:
+            return pair[0] if pair[1] == index else pair[1]
+        i += 1
+
+def children(generation, index):
+    i = 0
+    while True:
+        kids = members(generation+1, i)
+        if index in couple(generation, i):
+            return kids
+        i += 1
 
 while not done:
     for e in event.get():
@@ -153,6 +169,14 @@ while not done:
                     if generation > 0:
                         mom, dad = couple(generation-1, fam)
                         print 'parents',mom,'and',dad
+
+                    partner = spouse(generation, index)
+                    print 'spouse',partner
+
+                    kids = children(generation, index)
+                    print 'kids',', '.join([str(k) for k in kids])
+
+                    print
                     break
 
     sprites.update()
