@@ -134,18 +134,12 @@ def couple(generation, n):
 
 def spouse(generation, index):
     cs = couples(generation)
+    n = 0
     while True:
         c = next(cs)
         if index in c:
-            return c[0] if c[1] == index else c[1]
-
-def children(generation, index):
-    i = 0
-    while True:
-        kids = members(generation+1, i)
-        if index in couple(generation, i):
-            return kids
-        i += 1
+            return (n, c[0] if c[1] == index else c[1])
+        n += 1
 
 def describeperson(generation, index):
     print 'person',index
@@ -163,10 +157,10 @@ def describeperson(generation, index):
         mom, dad = couple(generation-1, fam)
         print 'parents',mom,'and',dad
 
-    partner = spouse(generation, index)
+    n, partner = spouse(generation, index)
     print 'spouse',partner
 
-    kids = children(generation, index)
+    kids = members(generation+1, n)
     print 'kids',', '.join([str(k) for k in kids])
 
     print
