@@ -187,7 +187,7 @@ def describeperson(generation, index):
         gen = generation - 1
         fam = family(gen, (mom, dad)[i])
         line = []
-        while gen >= 0 and len(line) < 5:
+        while gen >= 0 and (not line or line[-1] < 10000):
             fore = couple(gen, fam)[i]
             fam = family(gen, fore)
             line.append(fore)
@@ -205,7 +205,7 @@ while not done:
                 done = True
             elif e.unicode == u'r':
                 generation = randint(0,500)
-                index = randint(0,100000)
+                index = randint(0,10000)
                 while not personat(generation, index):
                     index += 1
                 describeperson(generation, index)
