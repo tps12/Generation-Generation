@@ -156,6 +156,30 @@ def children(generation, index):
             return kids
         i += 1
 
+def describeperson(generation, index):
+    print 'person',index
+
+    fam = family(generation, index)
+    print 'member of family',fam,'in generation', generation
+
+    sibs = [m for m in members(generation, fam) if m != index]
+    if sibs:
+        print 'siblings', ', '.join([str(s) for s in sibs])
+    else:
+        print 'no siblings'
+
+    if generation > 0:
+        mom, dad = couple(generation-1, fam)
+        print 'parents',mom,'and',dad
+
+    partner = spouse(generation, index)
+    print 'spouse',partner
+
+    kids = children(generation, index)
+    print 'kids',', '.join([str(k) for k in kids])
+
+    print
+
 while not done:
     for e in event.get():
         if e.type == QUIT:
@@ -169,28 +193,8 @@ while not done:
                     generation = sprite.rect.left / 8
                     index = sprite.rect.top / 8
 
-                    print 'person',index
-
-                    fam = family(generation, index)
-                    print 'member of family',fam,'in generation', generation
-
-                    sibs = [m for m in members(generation, fam) if m != index]
-                    if sibs:
-                        print 'siblings', ', '.join([str(s) for s in sibs])
-                    else:
-                        print 'no siblings'
-
-                    if generation > 0:
-                        mom, dad = couple(generation-1, fam)
-                        print 'parents',mom,'and',dad
-
-                    partner = spouse(generation, index)
-                    print 'spouse',partner
-
-                    kids = children(generation, index)
-                    print 'kids',', '.join([str(k) for k in kids])
-
-                    print
+                    describeperson(generation, index)
+                    
                     break
 
     sprites.update()
