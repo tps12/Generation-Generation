@@ -3,6 +3,7 @@ import noise
 import pygame
 from pygame import display, event, Surface
 from pygame.locals import *
+from pygame.sprite import Sprite, Group
 from pygame.time import Clock
 
 def gray_value(v):
@@ -26,6 +27,8 @@ background.unlock()
 
 screen.blit(background, (0,0))
 
+sprites = Group()
+
 limit = Clock()
 
 done = False
@@ -37,6 +40,10 @@ while not done:
         elif e.type == KEYDOWN:
             if e.key == K_ESCAPE:
                 done = True
+
+    sprites.update()
+    sprites.clear(screen, background)
+    sprites.draw(screen)
     
     display.flip()
 
