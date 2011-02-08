@@ -45,7 +45,7 @@ for x in range(0, background.get_width(), 8):
         
         sprite = Sprite()
         sprite.image = Surface((4,4), flags=SRCALPHA)
-        male = sex(x,y)
+        male = sex(x/8,y/8)
         draw.circle(sprite.image, (196,196,255) if male else (255,196,196),
                     (2,2), 2, 1)
         sprite.rect = sprite.image.get_rect().move(x, y)
@@ -54,6 +54,19 @@ for x in range(0, background.get_width(), 8):
 limit = Clock()
 
 done = False
+
+def family(generation, index):
+    fam = 0
+    infam = False
+    for i in range(0, index):
+        if personat(generation, i):
+            if not infam:
+                infam = True
+        else:
+            if infam:
+                infam = False
+                fam += 1
+    return fam
 
 while not done:
     for e in event.get():
@@ -69,18 +82,45 @@ while not done:
                     index = sprite.rect.top / 8
 
                     if generation > 0:
-                        family = 0
-                        infam = False
-                        for i in range(0, index):
-                            if personat(generation, i):
-                                if not infam:
-                                    infam = True
-                            else:
-                                if infam:
-                                    infam = False
-                                    family += 1
-                        print family
-                    
+                        fam = family(generation, index)
+
+                        i = 0
+                        mom = dad = None
+                        men = women = 0
+                        while True:
+                            if personat(generation-1, i):                                    
+                                pfam = family(generation-1, i)
+
+                                if mom is None and dad is None:
+                                    if sex(generation-1, i):
+                                        if men >= fam:
+                                            dad = i, pfam
+                                        else:
+                                            men += 1
+                                    else:
+                                        if women >= fam:
+                                            mom = i, pfam
+                                        else:
+                                            women += 1
+                                elif mom is not None:
+                                    if sex(generation-1, i):
+                                        if men >= fam:
+                                            if pfam != mom[1]:
+                                                dad = i, pfam
+                                                break
+                                        else:
+                                            men += 1
+                                else:
+                                    if not sex(generation-1, i):
+                                        if women >= fam:
+                                            if pfam != dad[1]:
+                                                mom = i, pfam
+                                                break
+                                        else:
+                                            women += 1
+                            i += 1
+
+                        print mom[0], dad[0]
                     break
 
     sprites.update()
