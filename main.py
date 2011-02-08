@@ -1,3 +1,4 @@
+from collections import deque
 from random import randint
 from sys import argv
 
@@ -119,46 +120,23 @@ def people(generation):
         i += 1
 
 def couples(generation):
-    n = 0
+    men = deque()
+    women = deque()
+
+    ps = people(generation)
     while True:
-        i = 0
-        mom = dad = None
-        men = women = 0
-        while True:
-            if personat(generation, i):                                    
-                pfam = family(generation, i)
-
-                if mom is None and dad is None:
-                    if sex(generation, i):
-                        if men >= n:
-                            dad = i, pfam
-                        else:
-                            men += 1
-                    else:
-                        if women >= n:
-                            mom = i, pfam
-                        else:
-                            women += 1
-                elif mom is not None:
-                    if sex(generation, i):
-                        if men >= n:
-                            if pfam != mom[1]:
-                                dad = i, pfam
-                                break
-                        else:
-                            men += 1
-                else:
-                    if not sex(generation, i):
-                        if women >= n:
-                            if pfam != dad[1]:
-                                mom = i, pfam
-                                break
-                        else:
-                            women += 1
-            i += 1
-        yield mom[0], dad[0]
-        n += 1
-
+        i, fam = next(ps)
+        if sex(generation, i):
+            if women and women[0][1] != fam:
+                yield women.popleft()[0], i
+            else:
+                men.append((i,fam))
+        else:
+            if men and men[0][1] != fam:
+                yield i, men.popleft()[0]
+            else:
+                women.append((i,fam))
+    
 def couple(generation, n):
     cs = couples(generation)
     while True:
