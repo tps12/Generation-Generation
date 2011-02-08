@@ -178,6 +178,19 @@ def spouse(generation, index):
             return (n, c[0] if c[1] == index else c[1])
         n += 1
 
+def spouselist(generation, index):
+    cs = couples(generation)
+    n = 0
+    found = False
+    while True:
+        c = next(cs)
+        if index in c:
+            found = True
+            yield (n, c[0] if c[1] == index else c[1])
+        elif found:
+            return
+        n += 1
+
 def describeperson(generation, index):
     print 'person',index
 
@@ -197,11 +210,11 @@ def describeperson(generation, index):
     if childless(generation, index):
         print 'childless'
     else:
-        n, partner = spouse(generation, index)
-        print 'spouse',partner
+        for n, partner in spouselist(generation, index):
+            print 'spouse',partner
 
-        kids = members(generation+1, n)
-        print 'kids',', '.join([str(k) for k in kids])
+            kids = members(generation+1, n)
+            print 'kids',', '.join([str(k) for k in kids])
 
     for i in range(2):
         gen = generation - 1
