@@ -84,26 +84,6 @@ def family(generation, index):
                 fam += 1
     return fam
 
-def members(generation, family):
-    fam = 0
-    infam = False
-    i = 0
-    sibs = []
-    while True:
-        if personat(generation, i):
-            if not infam:
-                infam = True
-            if fam == family:
-                sibs.append(i)
-        else:
-            if infam:
-                infam = False
-                if fam == family:
-                    break
-                fam += 1
-        i += 1
-    return sibs
-
 def people(generation):
     fam = 0
     infam = False
@@ -118,6 +98,13 @@ def people(generation):
                 infam = False
                 fam += 1
         i += 1
+
+def members(generation, family):
+    for i, fam in people(generation):
+        if fam == family:
+            yield i
+        elif fam > family:
+            return
 
 def couples(generation):
     men = deque()
