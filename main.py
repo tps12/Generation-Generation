@@ -43,6 +43,15 @@ def childless(x, y):
     global cdy
     return noise.snoise2((x+cdx),(y+cdy),1,1) > 0.5
 
+mdx = randint(-2048,2048)
+mdy = randint(-2048,2048)
+def spouses(x, y):
+    global mdx
+    global mdy
+    m = noise.snoise2((x+mdx),(y+mdy),1,1)
+    m = max(0, m)
+    return int(4*m) + 1
+
 shownoise = '-shownoise' in [a.lower() for a in argv]
            
 background = Surface(screen.get_size())
@@ -132,14 +141,25 @@ def couples(generation):
             continue
         if sex(generation, i):
             if women and women[0][1] != fam:
-                yield women.popleft()[0], i
+                if women[0][2] > 1:
+                    women[0][2] -= 1
+                    mom = women[0][0]
+                else:
+                    mom = women.popleft()[0]
+                    
+                yield mom, i
             else:
-                men.append((i,fam))
+                men.append([i,fam,spouses(generation,i)])
         else:
             if men and men[0][1] != fam:
-                yield i, men.popleft()[0]
+                if men[0][2] > 1:
+                    men[0][2] -= 1
+                    dad = men[0][0]
+                else:
+                    dad = men.popleft()[0]
+                yield i, dad
             else:
-                women.append((i,fam))
+                women.append([i,fam,spouses(generation,i)])
     
 def couple(generation, n):
     cs = couples(generation)
