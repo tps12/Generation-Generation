@@ -146,12 +146,11 @@ def couple(generation, n):
         n -= 1
 
 def spouse(generation, index):
-    i = 0
+    cs = couples(generation)
     while True:
-        pair = couple(generation, i)
-        if index in pair:
-            return pair[0] if pair[1] == index else pair[1]
-        i += 1
+        c = next(cs)
+        if index in c:
+            return c[0] if c[1] == index else c[1]
 
 def children(generation, index):
     i = 0
@@ -194,7 +193,7 @@ while not done:
                 done = True
             elif e.unicode == u'r':
                 generation = randint(0,500)
-                index = randint(0,10000)
+                index = randint(0,100000)
                 while not personat(generation, index):
                     index += 1
                 describeperson(generation, index)
