@@ -1,3 +1,5 @@
+from sys import argv
+
 import noise
 
 import pygame
@@ -23,13 +25,18 @@ def noiseat(x, y):
 
 def sex(x, y):
     return noise.snoise2((x+6253),(y-1220),1,1) > 0
+
+shownoise = '-shownoise' in [a.lower() for a in argv]
            
 background = Surface(screen.get_size())
-background.lock()
-for y in range(0, background.get_height()):
-    for x in range(0, background.get_width()):
-        background.set_at((x,y), grayvalue(noiseat(x,y)))
-background.unlock()
+if shownoise:
+    background.lock()
+    for y in range(0, background.get_height()):
+        for x in range(0, background.get_width()):
+            background.set_at((x,y), grayvalue(noiseat(x,y)))
+    background.unlock()
+else:
+    background.fill((255,255,255))
 
 screen.blit(background, (0,0))
 
@@ -40,14 +47,21 @@ def personat(x,y):
 
 for x in range(0, background.get_width(), 8):
     for y in range(0, background.get_height(), 8):
-        if not personat(x/8, y/8):
+        present = personat(x/8, y/8)
+        if shownoise and not present:
             continue
         
         sprite = Sprite()
         sprite.image = Surface((4,4), flags=SRCALPHA)
-        male = sex(x/8,y/8)
-        draw.circle(sprite.image, (196,196,255) if male else (255,196,196),
-                    (2,2), 2, 1)
+        if present:
+            sprite.exists = True
+            male = sex(x/8,y/8)
+            draw.circle(sprite.image, (196,196,255) if male else (255,196,196),
+                            (2,2), 2, 1 if shownoise else 0)
+        else:
+            sprite.exists = False
+        if not shownoise:
+            draw.circle(sprite.image, (128,128,128), (2,2), 2, 1)
         sprite.rect = sprite.image.get_rect().move(x, y)
         sprites.add(sprite)
 
@@ -151,7 +165,7 @@ while not done:
                 done = True
         elif e.type == MOUSEBUTTONDOWN and e.button == 1:
             for sprite in sprites:
-                if sprite.rect.collidepoint(e.pos):
+                if sprite.rect.collidepoint(e.pos) and sprite.exists:
                     generation = sprite.rect.left / 8
                     index = sprite.rect.top / 8
 
