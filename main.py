@@ -7,7 +7,7 @@ from pygame.sprite import Sprite, Group
 from pygame.time import Clock
 
 def grayvalue(v):
-    return [int(128 * (1 + v)) for i in range(3)]
+    return [int(128 * v) for i in range(3)]
 
 pygame.init()
 
@@ -15,7 +15,7 @@ screen = display.set_mode((800,800), HWSURFACE)
 display.set_caption('Generations')
 
 def noiseat(x, y):
-    return noise.snoise2(
+    return 1 + noise.snoise2(
             (x+50) / 600.0 / 512,
             (y-900) / 600.0 / 512,
             12,
@@ -34,6 +34,8 @@ sprites = Group()
 
 for y in range(0, background.get_height(), 8):
     for x in range(0, background.get_width(), 8):
+        if noiseat(x,y) > 0.8:
+            continue
         
         sprite = Sprite()
         sprite.image = Surface((4,4), flags=SRCALPHA)
