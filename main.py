@@ -16,8 +16,8 @@ display.set_caption('Generations')
 
 def noiseat(x, y):
     return 1 + noise.snoise2(
-            x / 800.0,
-            y / 800.0,
+            x,
+            y / 1000.0,
             12,
             1)
            
@@ -34,7 +34,7 @@ sprites = Group()
 
 for y in range(0, background.get_height(), 8):
     for x in range(0, background.get_width(), 8):
-        if noiseat(x,y) > 0.8:
+        if noiseat(x,y) > 0.9:
             continue
         
         sprite = Sprite()
@@ -61,4 +61,4 @@ while not done:
     
     display.flip()
 
-    limit.tick()
+    limit.tick(20)
