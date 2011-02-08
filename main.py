@@ -1,3 +1,4 @@
+from random import randint
 from sys import argv
 
 import noise
@@ -187,6 +188,13 @@ while not done:
         elif e.type == KEYDOWN:
             if e.key == K_ESCAPE:
                 done = True
+            elif e.unicode == u'r':
+                generation = randint(0,500)
+                index = randint(0,1000)
+                while not personat(generation, index):
+                    index += 1
+                describeperson(generation, index)
+                
         elif e.type == MOUSEBUTTONDOWN and e.button == 1:
             for sprite in sprites:
                 if sprite.rect.collidepoint(e.pos) and sprite.exists:
