@@ -194,7 +194,7 @@ while not done:
                 done = True
             elif e.unicode == u'r':
                 generation = randint(0,500)
-                index = randint(0,1000)
+                index = randint(0,10000)
                 while not personat(generation, index):
                     index += 1
                 describeperson(generation, index)
